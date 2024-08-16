@@ -1,0 +1,115 @@
+﻿{
+  "enabled": true,
+  "code": "sanctuary",
+  "class": "BlockSanctuary",
+  "entityClass": "BESanctuary",
+  "attributes": {
+    "radius": 50,
+    "vertRange": 256,
+    "sicknessDuration": 5000,
+    "tickRate": 1000,
+    "saturationConsumptionPerPlayer": 10,
+    "foodContainerRange": 7,
+    "maxFoodContainers": 6,
+    "consumeFoodRate": 4,
+    "maxSaturation": 200000,
+
+    "fenceConnect": {
+      "north": false,
+      "east": false,
+      "west": false,
+      "south": false
+    }
+  },
+  "creativeinventory": {
+    "general": [
+      "*-east"
+    ],
+    "decorative": [
+      "*-east"
+    ]
+  },
+  "variantgroups": [
+    {
+      "code": "metal",
+      "states": [ "copper", "tinbronze", "iron" ]
+    },
+    {
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "behaviors": [
+    {
+      "name": "Lockable"
+    },
+    {
+      "name": "HorizontalOrientable",
+      "properties": {
+        "dropBlockFace": "east",
+        "drop": {
+          "type": "block",
+          "code": "sanctuary-{metal}-east"
+        }
+
+      }
+    },
+    {
+      "name": "Unstable"
+
+    },
+    {
+      "name": "Multiblock",
+      "properties": {
+        "sizex": 1,
+        "sizey": 3,
+        "sizez": 1,
+        "cposition": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      }
+    }
+  ],  
+  "shapeByType": {
+    "*-north": {
+      "base": "block/sanctuary",
+      "rotateY": 0
+    },
+    "*-east": {
+      "base": "block/sanctuary",
+      "rotateY": 270
+    },
+    "*-west": {
+      "base": "block/sanctuary",
+      "rotateY": 90
+    },
+    "*-south": {
+      "base": "block/sanctuary",
+      "rotateY": 180
+    }
+  },
+  "textures": {
+    "blackbronze2": { "base": "game:block/metal/sheet/{metal}1" },
+    "charred": { "base": "game:block/wood/charred" },
+    "brass": { "base": "game:block/metal/sheet/brass1" },
+    "smoky": { "base": "game:block/glass/smoky" },
+    "rustyglow": { "base": "game:block/machine/statictranslocator/rustyglow" },
+    "iron": { "base": "game:block/metal/sheet/{metal}2" },
+    "rusty-iron": { "base": "game:block/metal/sheet/{metal}3" }
+  },
+
+  "lightAbsorption": 0,
+  "resistance": 0.15,
+  "sidesolid": { "all": false },
+  "sideopaque": { "all": false },
+  "collisionSelectionBox": {
+    "x1": 0.071,
+    "y1": 0,
+    "z1": 0.077,
+    "x2": 0.9484,
+    "y2": 0.7284,
+    "z2": 0.9196
+  }
+
+}
