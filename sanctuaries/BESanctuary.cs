@@ -1,23 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Vintagestory.API.Util;
 using Vintagestory.GameContent;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Reflection.Metadata.BlobBuilder;
-using static Vintagestory.Server.Timer;
 
 namespace sanctuaries
 {
@@ -29,7 +18,7 @@ namespace sanctuaries
         GuiDialogSanctuaryName sancDialog;
 
         public int radius, vertRange, sicknessDuration, tickRate, foodContainerRange, maxFoodContainers, consumeFoodRate;
-        
+
         public bool activated = false;
         public bool underSiege = false;
 
@@ -52,15 +41,15 @@ namespace sanctuaries
         public long lastLocatePing = 0;
         public long lastSiegePing = 0;
 
-        public List<BlockPos> foodContainers;               
+        public List<BlockPos> foodContainers;
 
 
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
-                       
-            
-            
+
+
+
             if (Block.Attributes["radius"].Exists)
             {
                 radius = Block.Attributes["radius"].AsInt();
@@ -69,7 +58,7 @@ namespace sanctuaries
             {
                 vertRange = Block.Attributes["vertRange"].AsInt();
             }
-            
+
             if (Block.Attributes["sicknessDuration"].Exists)
             {
                 sicknessDuration = Block.Attributes["sicknessDuration"].AsInt();
@@ -99,14 +88,14 @@ namespace sanctuaries
             {
                 saturationConsumptionPerPlayer = Block.Attributes["saturationConsumptionPerPlayer"].AsInt();
             }
-                       
+
 
             consumeFoodListenerID = null;
             BPSListenerID = null;
             foodContainerListenerID = null;
-           
-            
-            
+
+
+
 
             foodContainers = new List<BlockPos>();
 
@@ -116,7 +105,7 @@ namespace sanctuaries
             }
 
         }
-        
+
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
@@ -128,17 +117,17 @@ namespace sanctuaries
             tree.SetString("currentOwnerUID", currentOwnerUID);
             tree.SetString("currentOwnerName", currentOwnerName);
             tree.SetString("sanctuaryName", sanctuaryName);
-                        
+
 
             int counter = 0;
-            foreach(BlockPos pos in foodContainers)
+            foreach (BlockPos pos in foodContainers)
             {
                 tree.SetBlockPos("foodContainer" + counter, pos);
                 counter++;
             }
 
             tree.SetInt("numberOfContainers", counter);
-            
+
 
         }
 
@@ -151,10 +140,10 @@ namespace sanctuaries
             currentSaturation = tree.GetFloat("currentSaturation");
             currentOwnerUID = tree.GetString("currentOwnerUID");
             currentOwnerName = tree.GetString("currentOwnerName");
-            
+
             sanctuaryName = tree.GetString("sanctuaryName");
-            
-            
+
+
             foodContainers = new List<BlockPos>();
             int containers = tree.GetInt("numberOfContainers");
 
@@ -171,7 +160,8 @@ namespace sanctuaries
         {
             base.OnReceivedClientPacket(fromPlayer, packetid, data);
 
-            if(packetid == 7000) {                              
+            if (packetid == 7000)
+            {
 
                 sanctuaryName = System.Text.Encoding.Default.GetString(data, 2, data.Length - 2);
 
@@ -191,10 +181,11 @@ namespace sanctuaries
                     return true;
                 };
 
-                
+
             }
 
-            if(Api.Side == EnumAppSide.Client && byPlayer.Entity.Controls.ShiftKey) {
+            if (Api.Side == EnumAppSide.Client && byPlayer.Entity.Controls.ShiftKey)
+            {
 
                 if (!activated)
                 {
@@ -206,16 +197,16 @@ namespace sanctuaries
                     sancDialog = new GuiDialogSanctuaryName(DialogTitle, null, Pos, Api as ICoreClientAPI);
                     sancDialog.TryOpen();
                     sancDialog.OnClosed += () => sancDialog = null;
-                   
+
                 }
 
             }
 
             return false;
-            
+
         }
 
-        
+
 
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
@@ -235,23 +226,23 @@ namespace sanctuaries
             //if (IsRunning())
             //{
             //    dsc.AppendLine("Sanctuary currently running! Preventing Block Placement of all enemies!");
-                
+
             //}
-            
+
             //if (underSiege)
             //{
             //    dsc.AppendLine("Sanctuary currently being sieged! Man your posts!");                
             //}
 
-            dsc.AppendLine("Range: " + radius + " / " + "Vertical Range:" + vertRange);            
+            dsc.AppendLine("Range: " + radius + " / " + "Vertical Range:" + vertRange);
             dsc.AppendLine("Current Saturation: " + currentSaturation + " / " + maxSaturation);
             dsc.AppendLine("Food Container Range: " + foodContainerRange);
-                        
+
             //if (foodContainers != null && foodContainers.Count > 0)
             //{
             //    dsc.AppendLine("Containers currently feeding Sanctuary: " + foodContainers.Count);
             //}
-            
+
 
             base.GetBlockInfo(forPlayer, dsc);
         }
@@ -259,8 +250,8 @@ namespace sanctuaries
         public bool IsRunning()
         {
             return running;
-        }              
-                              
+        }
+
 
         private void OnBlockPlacementSickness(float obj)
         {
@@ -271,7 +262,7 @@ namespace sanctuaries
             if (players == null) { return; }
             foreach (IPlayer p in players)
             {
-                if(underSiege)
+                if (underSiege)
                 {
                     if (Api.Side == EnumAppSide.Server && Api.World.Calendar.ElapsedSeconds - lastSiegePing > 1000)
                     {
@@ -291,12 +282,12 @@ namespace sanctuaries
                     }
 
                     GiveReinforcementSickness(p, "sanctuary-reinforcement-sickness-undersiege");
-                    
+
                     if (!HasPermission(p))
                     {
                         enemiesLocated = true;
                         currentSaturation -= saturationConsumptionPerPlayer;
-                        
+
                         GiveBlockPlacementSickness(p, "sanctuary-blockplacement-sickness");
                     }
                 }
@@ -304,40 +295,42 @@ namespace sanctuaries
                 if (!underSiege && !HasPermission(p))
                 {
                     GiveBlockPlacementSickness(p, "sanctuary-blockplacement-sickness");
-                    
+
                     GiveReinforcementSickness(p, "sanctuary-reinforcement-sickness");
-                    
+
                     currentSaturation -= saturationConsumptionPerPlayer;
                     enemiesLocated = true;
-                                                           
+
                 }
             }
-            if(!enemiesLocated && underSiege)
+            if (!enemiesLocated && underSiege)
             {
                 underSiege = false;
             }
             if (enemiesLocated && !underSiege)
             {
-                
+
                 underSiege = true;
-                if (Api.Side == EnumAppSide.Server) { 
+                if (Api.Side == EnumAppSide.Server)
+                {
                     (Api as ICoreServerAPI).SendIngameDiscovery((Api.World.PlayerByUid(currentOwnerUID) as IServerPlayer), "sanctuary-undersiege", "Sanctuary is under SIEGE!");
                     lastSiegePing = Api.World.Calendar.ElapsedSeconds;
 
                     ModSystemBlockReinforcement reinforceMod = Api.ModLoader.GetModSystem<ModSystemBlockReinforcement>();
                     if (reinforceMod.IsReinforced(Pos))
                     {
-                        foreach(IPlayer player in (Api as ICoreServerAPI).Groups.PlayerGroupsById.GetValueOrDefault(reinforceMod.GetReinforcment(Pos).GroupUid).OnlinePlayers){
+                        foreach (IPlayer player in (Api as ICoreServerAPI).Groups.PlayerGroupsById.GetValueOrDefault(reinforceMod.GetReinforcment(Pos).GroupUid).OnlinePlayers)
+                        {
                             (Api as ICoreServerAPI).SendIngameDiscovery((Api.World.PlayerByUid(player.PlayerUID) as IServerPlayer), "sanctuary-undersiege", "Sanctuary is under SIEGE!");
                         }
                     }
 
                 }
-                
 
-                
+
+
             }
-            
+
             MarkDirty();
         }
 
@@ -371,8 +364,8 @@ namespace sanctuaries
         private bool HasPermission(IPlayer player)
         {
             if (player == null) return false;
-            if(player.PlayerName == currentOwnerName) return true;
-            if(player.PlayerUID == currentOwnerUID) return true;
+            if (player.PlayerName == currentOwnerName) return true;
+            if (player.PlayerUID == currentOwnerUID) return true;
             ModSystemBlockReinforcement reinforceMod = Api.ModLoader.GetModSystem<ModSystemBlockReinforcement>();
             if (reinforceMod.IsReinforced(Pos))
             {
@@ -381,16 +374,16 @@ namespace sanctuaries
                     return true;
                 }
             }
-                                
+
 
             return false;
         }
-        
+
         private bool TryActivate(bool fromLoad)
         {
             if (!fromLoad && activated) return false;
             activated = true;
-                        
+
 
             if (consumeFoodListenerID == null)
             {
@@ -406,24 +399,24 @@ namespace sanctuaries
                 foodContainerListenerID = RegisterGameTickListener(LocateContainers, 30000);
             }
 
-                           
+
             MarkDirty();
             return true;
-                    
+
         }
-               
+
 
         private void ConsumeNearbyFood(float obj)
         {
-            
-            if(currentSaturation > maxSaturation - 100) { return; }
-            if (foodContainers.Count <= 1 && (Api.World.Calendar.ElapsedSeconds - lastLocatePing > 15 )) LocateContainers(0.0f);
+
+            if (currentSaturation > maxSaturation - 100) { return; }
+            if (foodContainers.Count <= 1 && (Api.World.Calendar.ElapsedSeconds - lastLocatePing > 15)) LocateContainers(0.0f);
 
             List<BlockPos> posToRemove = new List<BlockPos>();
 
-            
 
-            foreach(BlockPos pos in foodContainers)
+
+            foreach (BlockPos pos in foodContainers)
             {
                 bool foundFood = false;
                 Block containerBlock = Api.World.GetBlockAccessor(false, false, false).GetBlock(pos);
@@ -433,30 +426,33 @@ namespace sanctuaries
                     posToRemove.Add(pos);
                     continue;
                 }
-                
+
                 foreach (ItemSlot slot in container.Inventory)
                 {
-                    
+
                     if (!slot.Empty && slot.Itemstack.Collectible.NutritionProps != null)
                     {
                         foundFood = true;
                         currentSaturation += slot.Itemstack.Collectible.NutritionProps.Satiety;
                         if (currentSaturation > maxSaturation) currentSaturation = maxSaturation;
-                        
+
                         slot.TakeOut(1);
                         slot.MarkDirty();
                         break;
                     }
                 }
-                if (!foundFood) { 
-                    posToRemove.Add(pos); 
-                } else {
+                if (!foundFood)
+                {
+                    posToRemove.Add(pos);
+                }
+                else
+                {
                     break;
                 }
-                
+
             }
 
-            foreach(BlockPos blPos in posToRemove)
+            foreach (BlockPos blPos in posToRemove)
             {
                 foodContainers.Remove(blPos);
             }
@@ -471,16 +467,16 @@ namespace sanctuaries
             if (counter >= maxFoodContainers) return;
 
             List<BlockPos> list = new List<BlockPos>();
-                        
+
             Api.World.GetBlockAccessor(false, false, false).SearchBlocks(Pos.DownCopy(foodContainerRange).NorthCopy(foodContainerRange).WestCopy(foodContainerRange), Pos.UpCopy(foodContainerRange).SouthCopy(foodContainerRange).EastCopy(foodContainerRange), (tempBlock, tempPos) =>
             {
                 if (tempBlock == null) return true;
-                if(tempBlock is BlockGenericTypedContainer)
+                if (tempBlock is BlockGenericTypedContainer)
                 {
                     BlockEntityContainer container = tempBlock.GetBlockEntity<BlockEntityContainer>(tempPos);
                     if (container.Inventory.Empty) return true;
                     bool containsFood = false;
-                    foreach(ItemSlot slot in container.Inventory)
+                    foreach (ItemSlot slot in container.Inventory)
                     {
                         if (slot.Empty) continue;
                         if (slot.Itemstack.Collectible.NutritionProps != null)
@@ -489,7 +485,8 @@ namespace sanctuaries
                             break;
                         }
                     }
-                    if (containsFood) { 
+                    if (containsFood)
+                    {
                         list.Add(tempPos.Copy());
                         counter++;
                     }
@@ -505,10 +502,10 @@ namespace sanctuaries
             foodContainers = list;
             lastLocatePing = Api.World.Calendar.ElapsedSeconds;
 
-            
+
             MarkDirty();
         }
 
-        
+
     }
 }

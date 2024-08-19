@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vintagestory.API.Client;
+﻿using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 
 namespace sanctuaries
@@ -47,7 +41,7 @@ namespace sanctuaries
                 .AddShadedDialogBG(bgBounds)
                 .AddDialogTitleBar(DialogTitle)
                 .BeginChildElements(bgBounds)
-                    .AddTextInput(textInputBounds, OnEnterName, null, "sanctuaryName")    
+                    .AddTextInput(textInputBounds, OnEnterName, null, "sanctuaryName")
                     .AddButton("Submit Name", OnTitleBarClose, buttonBounds)
                     .EndChildElements()
                 .Compose();
@@ -59,7 +53,7 @@ namespace sanctuaries
 
         private void OnEnterName(string obj)
         {
-            textInput = obj;           
+            textInput = obj;
 
         }
 
@@ -69,8 +63,8 @@ namespace sanctuaries
 
 
             return TryClose();
-            
+
         }
-       
+
     }
 }

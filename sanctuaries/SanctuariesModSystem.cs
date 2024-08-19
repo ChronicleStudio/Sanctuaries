@@ -1,34 +1,25 @@
-﻿using Cairo;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using Vintagestory.API.Client;
+﻿using System.Linq;
 using Vintagestory.API.Common;
-using Vintagestory.API.Common.Entities;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
-using Vintagestory.GameContent;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace sanctuaries
 {
     public class SanctuariesModSystem : ModSystem
     {
-        ICoreAPI _api;             
+        ICoreAPI _api;
 
         public override void Start(ICoreAPI api)
         {
             api.RegisterCollectibleBehaviorClass("ReinforcementSickness", typeof(CollectibleBehaviorReinforcementSickness));
-                      
+
 
             api.RegisterBlockClass("BlockSanctuary", typeof(BlockSanctuary));
             api.RegisterBlockEntityClass("BESanctuary", typeof(BESanctuary));
             api.RegisterBlockBehaviorClass("BlockBehaviorBlockPlacementSickness", typeof(BlockBehaviorBlockPlacementSickness));
-                        
+
             _api = api;
-                    
+
             base.Start(api);
         }
 
