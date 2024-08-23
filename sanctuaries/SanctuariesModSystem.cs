@@ -1,9 +1,13 @@
-﻿using System.Linq;
+﻿using Sanctuaries.BlockBehaviors;
+using Sanctuaries.BlockEntities;
+using Sanctuaries.Blocks;
+using Sanctuaries.CollectibleBehaviors;
+using System.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 
-namespace sanctuaries
+namespace Sanctuaries
 {
     public class SanctuariesModSystem : ModSystem
     {
@@ -15,7 +19,7 @@ namespace sanctuaries
 
 
             api.RegisterBlockClass("BlockSanctuary", typeof(BlockSanctuary));
-            api.RegisterBlockEntityClass("BESanctuary", typeof(BESanctuary));
+            api.RegisterBlockEntityClass("BESanctuary", typeof(BlockEntitySanctuary));
             api.RegisterBlockBehaviorClass("BlockBehaviorBlockPlacementSickness", typeof(BlockBehaviorBlockPlacementSickness));
 
             _api = api;
