@@ -3,9 +3,9 @@
 	"modid": "sanctuaries",
 	"name": "Sanctuaries Mod",
 	"authors": [
-		"Chronicl Studio"
+		"Chronicl Studio", "Dythanos"
 	],
-	"description": "To be added",
+	"description": "Provides an in-game way without commands of claiming areas and preventing outsiders from building in the area of effect. Sanctuaries rely on food to fuel and prevent block placement and reinforcement of non-aligned members. During active engagements where enemies are within the AoE of the Sanctuary, it also prevents defenders from reinforcing the Sanctuary while there are enemies within its AoE.",
 	"version": "1.0.0",
 	"dependencies": {
 		"game": ""

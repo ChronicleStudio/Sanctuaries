@@ -13,7 +13,8 @@ namespace Sanctuaries.BlockEntities
 {
 	public class BlockEntitySanctuary : BlockEntity
 	{
-		GuiDialogSanctuaryName sancDialog;
+		//GuiDialogSanctuaryName sancDialog;
+		SanctuaryGUI sancDialog;
 
 		public int radius, vertRange, sicknessDuration, tickRate, foodContainerRange, maxFoodContainers, consumeFoodRate;
 
@@ -188,7 +189,8 @@ namespace Sanctuaries.BlockEntities
 
 				if (byPlayer.Entity.Controls.ShiftKey && byPlayer.Entity.Controls.CtrlKey && sanctuaryName == "" && (sancDialog == null || !sancDialog.IsOpened()))
 				{
-					sancDialog = new GuiDialogSanctuaryName(DialogTitle, null, Pos, Api as ICoreClientAPI);
+					//sancDialog = new GuiDialogSanctuaryName(DialogTitle, null, Pos, Api as ICoreClientAPI);
+					sancDialog = new SanctuaryGUI(DialogTitle, null, Pos, Api as ICoreClientAPI);
 					sancDialog.TryOpen();
 					sancDialog.OnClosed += () => sancDialog = null;
 
